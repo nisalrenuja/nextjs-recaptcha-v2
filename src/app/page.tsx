@@ -2,9 +2,17 @@
 
 import React, { useRef, useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
-import type { NextPage } from "next";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Shield, ShieldCheck } from "lucide-react";
 
-const Page: NextPage = () => {
+export default function RecaptchaForm() {
   const recaptchaRef = useRef<ReCAPTCHA>(null);
   const [isVerified, setIsVerified] = useState(false);
 
@@ -40,22 +48,38 @@ const Page: NextPage = () => {
   };
 
   return (
-    <main className="flex flex-col items-center mt-10 gap-3">
-      <ReCAPTCHA
-        sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? ""}
-        ref={recaptchaRef}
-        onChange={handleChange}
-        onExpired={handleExpired}
-      />
-      <button
-        className="border p-2 bg-blue-500 text-white disabled:bg-gray-300 disabled:cursor-not-allowed"
-        type="submit"
-        disabled={!isVerified}
-      >
-        Submit Form
-      </button>
-    </main>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle>Secure Form Submission</CardTitle>
+          <CardDescription>
+            Please complete the reCAPTCHA to proceed
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex justify-center">
+            <ReCAPTCHA
+              sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? ""}
+              ref={recaptchaRef}
+              onChange={handleChange}
+              onExpired={handleExpired}
+            />
+          </div>
+          <Button className="w-full" type="submit" disabled={!isVerified}>
+            {isVerified ? (
+              <>
+                <ShieldCheck className="mr-2 h-4 w-4" />
+                Submit Form
+              </>
+            ) : (
+              <>
+                <Shield className="mr-2 h-4 w-4" />
+                Verify to Submit
+              </>
+            )}
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
   );
-};
-
-export default Page;
+}
